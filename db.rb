@@ -1,9 +1,8 @@
 require 'sqlite3'
 
-# Подключаемся к базе данных SQLite3
 db = SQLite3::Database.new("blog.db")
 
-# Таблица пользователей (логины и пароли)
+# Создание таблиц
 create_users_table_sql = <<-SQL
 CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -12,7 +11,6 @@ CREATE TABLE IF NOT EXISTS users (
 );
 SQL
 
-# Таблица записей на прием
 create_appointments_table_sql = <<-SQL
 CREATE TABLE IF NOT EXISTS appointments (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -23,7 +21,6 @@ CREATE TABLE IF NOT EXISTS appointments (
 );
 SQL
 
-# Таблица врачей с описанием
 create_doctors_table_sql = <<-SQL
 CREATE TABLE IF NOT EXISTS doctors (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -32,9 +29,25 @@ CREATE TABLE IF NOT EXISTS doctors (
 );
 SQL
 
-# Выполняем SQL-запросы для создания таблиц
 db.execute(create_users_table_sql)
 db.execute(create_appointments_table_sql)
 db.execute(create_doctors_table_sql)
 
 puts "Таблицы успешно созданы!"
+
+# Дополнительно: Заполнение таблицы doctors (если она пуста)
+if db.get_first_value("SELECT COUNT(*) FROM doctors") == 0
+  db.execute <<-SQL
+    INSERT INTO doctors (name, description) VALUES
+      ('Иванов Сергей Петрович', 'Хирург высшей категории с 15-летним стажем.'),
+      ('Петрова Анна Владимировна', 'Терапевт, кандидат медицинских наук.'),
+      ('Смирнов Дмитрий Игоревич', 'Невролог с 10-летним опытом.'),
+      ('Козлова Елена Александровна', 'Детский врач-стоматолог.'),
+      ('Федоров Михаил Олегович', 'Кардиолог, доктор медицинских наук.');
+  SQL
+  puts "Таблица doctors заполнена тестовыми данными!"
+else
+  puts "Таблица doctors уже содержит данные, пропускаем заполнение."
+end
+
+db.close
