@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+
+
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
@@ -10,5 +12,14 @@ Rails.application.routes.draw do
   # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
 
   # Defines the root path route ("/")
-  # root "posts#index"
+  root "rails/welcome#index"
+
+
+  # Другие маршруты...
+  # resources :registrations, only: [:new, :create]
+  get 'signup', to: 'registrations#new', as: 'new_registration'
+  post 'signup', to: 'registrations#create', as: 'registrations'
+
+  
+  
 end

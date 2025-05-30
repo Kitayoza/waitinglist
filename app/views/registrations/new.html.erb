@@ -1,0 +1,34 @@
+<h1>Регистрация</h1>
+
+<% if flash[:alert] %>
+  <div class="alert alert-danger">
+    <%= flash[:alert] %>
+  </div>
+<% end %>
+
+<%= form_with model: @user, url: registrations_path do |form| %>
+  <div class="field">
+    <%= form.label :login, "Логин" %>
+    <%= form.text_field :login, class: "form-control #{'is-invalid' if @user.errors[:login].any?}" %>
+    <% if @user.errors[:login].any? %>
+      <div class="invalid-feedback">
+        <%= @user.errors[:login].to_sentence %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="field">
+    <%= form.label :password, "Пароль" %>
+    <%= form.password_field :password, class: "form-control #{'is-invalid' if @user.errors[:password].any?}" %>
+    <% if @user.errors[:password].any? %>
+      <div class="invalid-feedback">
+        <%= @user.errors[:password].to_sentence %>
+      </div>
+    <% end %>
+    <small class="text-muted">Минимум 6 символов</small>
+  </div>
+
+  <div class="actions mt-3">
+    <%= form.submit "Зарегистрироваться", class: "btn btn-primary" %>
+  </div>
+<% end %>
