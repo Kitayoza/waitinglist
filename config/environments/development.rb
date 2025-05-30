@@ -71,9 +71,7 @@ Rails.application.configure do
   # config.generators.apply_rubocop_autocorrect_after_generate!
 
   # Allow hosting on *.replit.dev hosts
-  #config.hosts << /.*\.replit\.dev/
-
-  config.hosts.clear
+  config.hosts << /.*\.replit\.dev/
 
   
 end
