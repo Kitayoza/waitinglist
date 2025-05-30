@@ -1,0 +1,69 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+}
+
+
+body {
+    font-family: "Open Sans", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+    font-variation-settings:
+      "wdth" 100;
+  }
+
+  a {
+    text-decoration: none;
+  }
+
+  img {
+    max-width: 100%;
+  }
+
+  .doctor-card {
+  background: white;
+  padding: 15px;
+  margin-bottom: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-left: 3px solid #0097b2;
+  border-radius: 5px;
+}
+
+.doctor-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+/* Цена */
+.price {
+  font-weight: bold;
+  color: #f7941e;
+  font-size: 18px;
+}
+
+/* Кнопка "Записаться" */
+.btn-appointment {
+  padding: 6px 14px;
+  border: 2px solid #0097b2;
+  border-radius: 30px;
+  background: transparent;
+  color: #0097b2;
+  font-weight: bold;
+  font-family: inherit;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-appointment:hover {
+  background: #0097b2;
+  color: white;
+}
