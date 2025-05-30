@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Подтверждение записи</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: #f4f4f4;
+      margin: 0;
+      padding: 40px;
+    }
+    .container {
+      background: white;
+      padding: 30px;
+      max-width: 600px;
+      margin: auto;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    h2 {
+      margin-top: 0;
+    }
+    .info {
+      margin-bottom: 30px;
+    }
+    .info p {
+      margin: 8px 0;
+    }
+    .buttons {
+      display: flex;
+      justify-content: space-between;
+    }
+    .btn {
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .confirm {
+      background: #0097b2;
+      color: white;
+    }
+    .cancel {
+      background: #ccc;
+      color: black;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Подтвердите запись</h2>
+    <div class="info">
+      <p><strong>Врач:</strong> <span id="doctor"></span></p>
+      <p><strong>Дата приёма:</strong> <span id="date"></span></p>
+      <p><strong>Стоимость:</strong> <span id="price"></span> ₽</p>
+    </div>
+    <div class="buttons">
+      <button class="btn confirm" onclick="confirmAppointment()">Подтвердить</button>
+      <button class="btn cancel" onclick="window.history.back()">Отменить</button>
+    </div>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    document.getElementById("doctor").textContent = params.get("doctor") || "—";
+    document.getElementById("date").textContent = params.get("date") || "—";
+    document.getElementById("price").textContent = params.get("price") || "—";
+
+    function confirmAppointment() {
+      alert("Вы успешно записаны на приём!");
+      window.location.href = "dashboard.html"; // возвращение в личный кабинет
+    }
+  </script>
+</body>
+</html>
