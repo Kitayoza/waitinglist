@@ -1,2 +1,25 @@
-<h1>Sessions#new</h1>
-<p>Find me in app/views/sessions/new.html.erb</p>
+  <h1>Вход в систему</h1>
+
+  <%= form_with url: login_path, local: true do |form| %>
+    <% if flash[:alert] %>
+      <div class="alert alert-danger">
+        <%= flash[:alert] %>
+      </div>
+    <% end %>
+
+    <div class="field">
+      <%= form.label :login, "Логин" %>
+      <%= form.text_field :login, class: "form-control" %>
+    </div>
+
+    <div class="field">
+      <%= form.label :password, "Пароль" %>
+      <%= form.password_field :password, class: "form-control" %>
+    </div>
+
+    <div class="actions mt-3">
+      <%= form.submit "Войти", class: "btn btn-primary" %>
+    </div>
+  <% end %>
+
+  <p class="mt-3">Ещё нет аккаунта? <%= link_to 'Зарегистрируйтесь', new_registration_path %></p>

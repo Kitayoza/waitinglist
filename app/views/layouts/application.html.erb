@@ -23,6 +23,17 @@
   </head>
 
   <body>
+  <nav>
+    <%= link_to 'Главная', root_path %>
+
+    <% if logged_in? %>
+      <span>Привет, <%= current_user.login %></span>
+      <%= link_to 'Выйти', logout_path, method: :delete %>
+    <% else %>
+      <%= link_to 'Войти', login_path %>
+      <%= link_to 'Регистрация', new_registration_path %>
+    <% end %>
+  </nav>
     <%= yield %>
   </body>
 </html>

@@ -15,11 +15,13 @@ Rails.application.routes.draw do
   root "rails/welcome#index"
 
 
-  # Другие маршруты...
+  # Регистрация
   # resources :registrations, only: [:new, :create]
   get 'signup', to: 'registrations#new', as: 'new_registration'
   post 'signup', to: 'registrations#create', as: 'registrations'
-
   
-  
+  # Аутентификация
+  get 'login', to: 'sessions#new', as: 'login'
+  post 'login', to: 'sessions#create'
+  delete 'logout', to: 'sessions#destroy', as: 'logout'
 end
