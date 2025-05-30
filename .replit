@@ -10,7 +10,3 @@ run = ["sh", "-c", "bundle exec rails server --binding=0.0.0.0"]
 [[ports]]
 localPort = 3000
 externalPort = 80
-
-# Новая секция для конфигурирования белых списков хостов
-env:
-  HOSTS: ["44957351-261f-4ddd-ba6a-6e9e0a80325a-00-3p7m3d0fvxama.sisko.replit.dev"]  # Укажи сюда нужный домен
