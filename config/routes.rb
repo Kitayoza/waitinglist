@@ -11,4 +11,8 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   # root "posts#index"
+  get 'main', to: 'pages#main'
+  get 'confirm', to: 'pages#confirm'
+
+  root 'pages#main'
 end
