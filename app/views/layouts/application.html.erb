@@ -20,19 +20,117 @@
     <%# Includes all stylesheet files in app/assets/stylesheets %>
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
+
+    <style>
+      /* Основные стили навигации */
+      body {
+        margin: 0;
+        font-family: "Open Sans", sans-serif;
+        background: #f4f4f4;
+      }
+
+      header {
+        background: #fff;
+        padding: 10px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #ccc;
+      }
+
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .logo img {
+        height: 50px;
+      }
+
+      nav {
+        background: #0097b2;
+        padding: 0 20px;
+      }
+
+      nav ul {
+        display: flex;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+
+      nav li {
+        padding: 15px 20px;
+        position: relative;
+      }
+
+      nav a {
+        color: white;
+        text-decoration: none;
+        font-weight: 500;
+        transition: opacity 0.3s;
+      }
+
+      nav a:hover {
+        opacity: 0.8;
+      }
+
+      nav li.active {
+        background: #00acc1;
+      }
+
+      nav li.active::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: white;
+      }
+
+      .user-greeting {
+        color: white;
+        margin-right: 15px;
+        font-weight: 500;
+      }
+
+      .logout-btn {
+        background: none;
+        border: none;
+        color: white;
+        cursor: pointer;
+        font-family: inherit;
+        font-size: inherit;
+        padding: 0;
+      }
+    </style>
   </head>
 
   <body>
   <nav>
-    <%= link_to 'Главная', root_path %>
+    <ul>
+      <li class="<%= 'active' if current_page?(root_path) %>">
+        <%= link_to 'Главная', root_path %>
+      </li>
 
-    <% if logged_in? %>
-      <span>Привет, <%= current_user.login %></span>
-      <%= button_to 'Выйти', logout_path, method: :delete %>
-    <% else %>
-      <%= link_to 'Войти', login_path %>
-      <%= link_to 'Регистрация', new_registration_path %>
-    <% end %>
+      <% if logged_in? %>
+        <li class="user-greeting">
+          Привет, <%= current_user.login %>
+        </li>
+        <li>
+          <%= button_to 'Выйти', logout_path, method: :delete, class: 'logout-btn' %>
+        </li>
+      <% else %>
+        <li class="<%= 'active' if current_page?(login_path) %>">
+          <%= link_to 'Войти', login_path %>
+        </li>
+        <li class="<%= 'active' if current_page?(new_registration_path) %>">
+          <%= link_to 'Регистрация', new_registration_path %>
+        </li>
+      <% end %>
+    </ul>
   </nav>
     <%= yield %>
   </body>

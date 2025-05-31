@@ -1,34 +1,217 @@
-<h1>Регистрация</h1>
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Регистрация | Кабинет пациента</title>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet" />
+  <style>
+    * { 
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-<% if flash[:alert] %>
-  <div class="alert alert-danger">
-    <%= flash[:alert] %>
-  </div>
-<% end %>
+    body {
+      font-family: "Open Sans", sans-serif;
+      background: #f4f4f4;
+      color: #333;
+    }
 
-<%= form_with model: @user, url: registrations_path do |form| %>
-  <div class="field">
-    <%= form.label :login, "Логин" %>
-    <%= form.text_field :login, class: "form-control #{'is-invalid' if @user.errors[:login].any?}" %>
-    <% if @user.errors[:login].any? %>
-      <div class="invalid-feedback">
-        <%= @user.errors[:login].to_sentence %>
+    header {
+      background: #fff;
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #ccc;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo img {
+      height: 50px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 20px auto;
+      padding: 0 20px;
+    }
+
+    /* Registration Form */
+    .registration-section {
+      display: flex;
+      gap: 40px;
+    }
+
+    .registration-panel {
+      background: white;
+      padding: 30px;
+      width: 100%;
+      max-width: 500px;
+      margin: 0 auto;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      border-radius: 5px;
+    }
+
+    .registration-panel h1 {
+      background: #0097b2;
+      color: white;
+      padding: 15px;
+      margin: -30px -30px 20px -30px;
+      border-radius: 5px 5px 0 0;
+      font-size: 22px;
+    }
+
+    .registration-panel .field {
+      margin-bottom: 15px;
+    }
+
+    .registration-panel label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 600;
+      color: #555;
+    }
+
+    .registration-panel input[type="text"],
+    .registration-panel input[type="password"] {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+      font-family: inherit;
+    }
+
+    .registration-panel .form-control.is-invalid {
+      border-color: #dc3545;
+    }
+
+    .invalid-feedback {
+      color: #dc3545;
+      font-size: 14px;
+      margin-top: 5px;
+    }
+
+    .text-muted {
+      color: #6c757d;
+      font-size: 13px;
+    }
+
+    .btn {
+      display: inline-block;
+      background: #0097b2;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 16px;
+      transition: background 0.3s;
+    }
+
+    .btn:hover {
+      background: #007a8a;
+    }
+
+    .btn-primary {
+      background: #f7941e;
+    }
+
+    .btn-primary:hover {
+      background: #e07e0c;
+    }
+
+    .alert {
+      padding: 10px 15px;
+      margin-bottom: 20px;
+      border-radius: 3px;
+    }
+
+    .alert-danger {
+      background-color: #f8d7da;
+      border-color: #f5c6cb;
+      color: #721c24;
+    }
+
+    .login-link {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .login-link a {
+      color: #0097b2;
+      text-decoration: none;
+    }
+
+    .login-link a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">
+      <img src="logo.png" alt="Логотип" />
+      <div>
+        <h2 style="margin: 0; color: #007a87">Кабинет пациента</h2>
+        <small>Клиника "ЗДОРОВЬЕ"</small>
       </div>
-    <% end %>
-  </div>
+    </div>
+    <div>
+      <small>Телефонный центр: (888) 888-88-88</small>
+    </div>
+  </header>
 
-  <div class="field">
-    <%= form.label :password, "Пароль" %>
-    <%= form.password_field :password, class: "form-control #{'is-invalid' if @user.errors[:password].any?}" %>
-    <% if @user.errors[:password].any? %>
-      <div class="invalid-feedback">
-        <%= @user.errors[:password].to_sentence %>
+  <div class="container">
+    <div class="registration-section">
+      <div class="registration-panel">
+        <h1>📦 Регистрация</h1>
+
+        <% if flash[:alert] %>
+          <div class="alert alert-danger">
+            <%= flash[:alert] %>
+          </div>
+        <% end %>
+
+        <%= form_with model: @user, url: registrations_path do |form| %>
+          <div class="field">
+            <%= form.label :login, "Логин" %>
+            <%= form.text_field :login, class: "form-control #{'is-invalid' if @user.errors[:login].any?}", placeholder: "Придумайте логин" %>
+            <% if @user.errors[:login].any? %>
+              <div class="invalid-feedback">
+                <%= @user.errors[:login].to_sentence %>
+              </div>
+            <% end %>
+          </div>
+
+          <div class="field">
+            <%= form.label :password, "Пароль" %>
+            <%= form.password_field :password, class: "form-control #{'is-invalid' if @user.errors[:password].any?}", placeholder: "Придумайте пароль" %>
+            <% if @user.errors[:password].any? %>
+              <div class="invalid-feedback">
+                <%= @user.errors[:password].to_sentence %>
+              </div>
+            <% end %>
+            <small class="text-muted">Минимум 6 символов</small>
+          </div>
+
+          <div class="field">
+            <%= form.submit "Зарегистрироваться", class: "btn btn-primary", style: "width: 100%; padding: 12px;" %>
+          </div>
+        <% end %>
+
+        <div class="login-link">
+          Уже есть аккаунт? <a href="/login">Войти</a>
+        </div>
       </div>
-    <% end %>
-    <small class="text-muted">Минимум 6 символов</small>
+    </div>
   </div>
-
-  <div class="actions mt-3">
-    <%= form.submit "Зарегистрироваться", class: "btn btn-primary" %>
-  </div>
-<% end %>
+</body>
+</html>

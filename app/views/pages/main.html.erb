@@ -163,6 +163,34 @@
     .tab-content.active {
       display: block;
     }
+
+    .form-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .form-actions .btn {
+      flex: 1;
+      text-align: center;
+    }
+
+    input[type="submit"].btn {
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+      background: #0097b2;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      padding: 8px 15px;
+      border-radius: 3px;
+    }
+
+    input[type="submit"].btn:hover {
+      background: #007a8a;
+    }
   </style>
 </head>
 <body>
@@ -184,24 +212,41 @@
       <li data-tab="specialists">Специалисты</li>
     </ul>
   </nav>
+          
+        <!-- Login Tab -->
+        <div class="container tab-content active" id="login">
+          <div class="login-section">
+            <div class="login-panel">
+              <h2>🔒 Личный кабинет</h2>
 
-  <!-- Login Tab -->
-  <div class="container tab-content active" id="login">
-    <div class="login-section">
-      <div class="login-panel">
-        <h2>🔒 Личный кабинет</h2>
-        <label for="login">Логин пользователя:</label>
-        <input type="text" placeholder="Введите логин" />
-        <label for="password">Пароль:</label>
-        <input type="password" />
-        <div class="checkbox">
-          <input type="checkbox" id="agree" />
-          <label for="agree">Согласен(на) <a href="#">на обработку персональных данных</a></label>
-        </div>
-        <button class="btn" onclick="window.location.href='dashboard.html'">🔓 Войти</button>
-        <button class="btn">📦 Регистрация</button>
-        <div style="margin-top: 10px;"><a href="#">Забыли пароль?</a></div>
-      </div>
+              <% if flash[:alert] %>
+                <div class="alert alert-danger">
+                  <%= flash[:alert] %>
+                </div>
+              <% end %>
+
+              <%= form_with url: login_path, local: true do |form| %>
+                <div class="field">
+                  <%= form.label :login, "Логин пользователя:" %>
+                  <%= form.text_field :login, placeholder: "Введите логин", class: "form-control" %>
+                </div>
+
+                <div class="field">
+                  <%= form.label :password, "Пароль:" %>
+                  <%= form.password_field :password, class: "form-control" %>
+                </div>
+
+                <div class="checkbox">
+                  <%= form.check_box :remember_me %>
+                  <label for="remember_me">Согласен(на) <a href="#">на обработку персональных данных</a></label>
+                </div>
+
+                <%= form.submit "🔓 Войти", class: "btn" %>
+                <button class="btn"><%= link_to '📦 Регистрация', new_registration_path %></button>
+
+              <% end %>
+            </div>
+                    
       <div class="info">
         <h3>Уважаемый пациент!</h3>
         <p>Пациенты с симптомами ОРВИ на плановую консультацию не допускаются!</p>

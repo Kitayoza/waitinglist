@@ -12,8 +12,9 @@ Rails.application.routes.draw do
   # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
 
   # Defines the root path route ("/")
-  root "rails/welcome#index"
+  root 'pages#main'
 
+  get 'main', to: 'pages#main'
 
   # Регистрация
   # resources :registrations, only: [:new, :create]
