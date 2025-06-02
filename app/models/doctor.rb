@@ -1,14 +1,3 @@
-# app/controllers/pages_controller.rb
-class Specialization
-  attr_reader :id, :name, :description
-
-  def initialize(attributes)
-    @id = attributes['id']
-    @name = attributes['name']
-    @description = attributes['description']
-  end
-end
-
 class Doctor
   attr_reader :id, :full_name, :specialization_id, :description, :price
 
@@ -27,20 +16,5 @@ class Doctor
     db = SQLite3::Database.new("blog.db")
     db.results_as_hash = true
     db.execute(query).map { |doc| Doctor.new(doc) }
-  end
-end
-
-class PagesController < ApplicationController
-  def main
-    require 'sqlite3'
-
-    db = SQLite3::Database.new("blog.db")
-    db.results_as_hash = true
-
-    @specializations = db.execute("SELECT * FROM specializations").map do |spec|
-      Specialization.new(spec)
-    end
-
-    db.close
   end
 end

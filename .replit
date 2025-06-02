@@ -1,4 +1,4 @@
-modules = ["ruby-3.2", "web", "bash"]
+modules = ["web", "ruby-3.2", "bash"]
 run = "bundle exec rails server --binding=0.0.0.0"
 
 [nix]

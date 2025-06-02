@@ -115,6 +115,7 @@
       gap: 10px;
       align-items: center;
       border-radius: 5px;
+      cursor: pointer;
     }
     .specialty-card.selected {
       background: #00acc1;
@@ -123,6 +124,9 @@
     .specialty-card small {
       display: block;
       color: #555;
+    }
+    .specialty-card.selected small {
+      color: #e0e0e0;
     }
     .right-panel {
       flex: 1;
@@ -136,6 +140,7 @@
       align-items: center;
       border-left: 3px solid #0097b2;
       border-radius: 5px;
+      cursor: pointer;
     }
     .doctor-info {
       display: flex;
@@ -154,6 +159,37 @@
       font-weight: bold;
       color: #f7941e;
       font-size: 18px;
+    }
+
+    /* Schedule styles */
+    .schedule-box {
+      transition: all 0.3s ease;
+      max-height: 0;
+      overflow: hidden;
+      margin-top: 15px;
+    }
+    .schedule-box.active {
+      max-height: 500px;
+    }
+    .schedule-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    .schedule-table th, .schedule-table td {
+      padding: 8px;
+      text-align: center;
+      border: 1px solid #ddd;
+    }
+    .schedule-table th {
+      background-color: #f2f2f2;
+    }
+    .selectable-date {
+      cursor: pointer;
+      background-color: #e0f7fa;
+    }
+    .selectable-date:hover {
+      background-color: #b2ebf2;
     }
 
     /* Hide/Show sections */
@@ -191,6 +227,25 @@
     input[type="submit"].btn:hover {
       background: #007a8a;
     }
+
+    .schedule-price {
+      min-width: 100px;
+      padding: 10px;
+      background: #f8f8f8;
+      border-radius: 5px;
+      text-align: center;
+      margin-top: 10px;
+    }
+    .schedule-price .price-label {
+      font-size: 14px;
+      color: #666;
+    }
+    .schedule-price .price-value {
+      font-weight: bold;
+      color: #f7941e;
+      font-size: 18px;
+      margin-top: 5px;
+    }
   </style>
 </head>
 <body>
@@ -212,41 +267,40 @@
       <li data-tab="specialists">Специалисты</li>
     </ul>
   </nav>
-          
-        <!-- Login Tab -->
-        <div class="container tab-content active" id="login">
-          <div class="login-section">
-            <div class="login-panel">
-              <h2>🔒 Личный кабинет</h2>
 
-              <% if flash[:alert] %>
-                <div class="alert alert-danger">
-                  <%= flash[:alert] %>
-                </div>
-              <% end %>
+  <!-- Login Tab -->
+  <div class="container tab-content active" id="login">
+    <div class="login-section">
+      <div class="login-panel">
+        <h2>🔒 Личный кабинет</h2>
 
-              <%= form_with url: login_path, local: true do |form| %>
-                <div class="field">
-                  <%= form.label :login, "Логин пользователя:" %>
-                  <%= form.text_field :login, placeholder: "Введите логин", class: "form-control" %>
-                </div>
+        <% if flash[:alert] %>
+          <div class="alert alert-danger">
+            <%= flash[:alert] %>
+          </div>
+        <% end %>
 
-                <div class="field">
-                  <%= form.label :password, "Пароль:" %>
-                  <%= form.password_field :password, class: "form-control" %>
-                </div>
+        <%= form_with url: login_path, local: true do |form| %>
+          <div class="field">
+            <%= form.label :login, "Логин пользователя:" %>
+            <%= form.text_field :login, placeholder: "Введите логин", class: "form-control" %>
+          </div>
 
-                <div class="checkbox">
-                  <%= form.check_box :remember_me %>
-                  <label for="remember_me">Согласен(на) <a href="#">на обработку персональных данных</a></label>
-                </div>
+          <div class="field">
+            <%= form.label :password, "Пароль:" %>
+            <%= form.password_field :password, class: "form-control" %>
+          </div>
 
-                <%= form.submit "🔓 Войти", class: "btn" %>
-                <button class="btn"><%= link_to '📦 Регистрация', new_registration_path %></button>
+          <div class="checkbox">
+            <%= form.check_box :remember_me %>
+            <label for="remember_me">Согласен(на) <a href="#">на обработку персональных данных</a></label>
+          </div>
 
-              <% end %>
-            </div>
-                    
+          <%= form.submit "🔓 Войти", class: "btn" %>
+          <button class="btn"><%= link_to '📦 Регистрация', new_registration_path %></button>
+        <% end %>
+      </div>
+
       <div class="info">
         <h3>Уважаемый пациент!</h3>
         <p>Пациенты с симптомами ОРВИ на плановую консультацию не допускаются!</p>
@@ -254,7 +308,7 @@
           <li>Вы осуществляете дистанционную запись на прием к врачу-специалисту Клиники «Здоровье» в г. Ростове-на-Дону.</li>
           <li>Запись на первичный прием по направлению из поликлиник города, осуществляется в регистратуре медицинской организации, выдавшей направление.</li>
           <li>При отсутствие направления медицинская услуга будет оказана на платной основе (необходима предварительная оплата на сайте).</li>
-          <li>Для получения медицинской помощи Вам необходимо явиться за 15-20 минут до назначенного времени, при себе необходимо иметь:  паспорт, СНИЛС, направление.</li>
+          <li>Для получения медицинской помощи Вам необходимо явиться за 15-20 минут до назначенного времени, при себе необходимо иметь: паспорт, СНИЛС, направление.</li>
           <li>Запись через Личный кабинет доступна на ближайшую неделю.</li>
           <li>Прием пациентов в субботние дни осуществляется только на платной основе (вне зависимости от наличия направления, оформленного должным образом).</li>
           <li>Для записи по ДМС обратитесь в колл-центр.</li>
@@ -264,45 +318,38 @@
   </div>
 
   <div class="container tab-content" id="specialists">
-    <!-- Вот здесь должна быть ВСЯ логика по врачам -->
     <div class="specialists-section">
-        <!-- СПЕЦИАЛЬНОСТИ (левая панель) -->
-        <div class="left-panel">
-            <div class="specialty-card selected" data-specialty="allergolog">
+      <!-- СПЕЦИАЛЬНОСТИ (левая панель) -->
+      <div class="left-panel">
+        <% @specializations.each_with_index do |spec, index| %>
+          <div class="specialty-card <%= 'selected' if index == 0 %>" data-specialty="<%= spec.id %>">
             <div>
-                <strong>Аллерголог-иммунолог</strong><br />
-                <small>Доступно: 1</small>
+              <strong><%= spec.name %></strong><br />
+              <small>Доступно: <%= Doctor.where(specialization_id: spec.id).count %></small>
             </div>
-            </div>
-            <div class="specialty-card" data-specialty="gastro">
-            <div>
-                <strong>Гастроэнтеролог</strong><br />
-                <small>Доступно: 2</small>
-            </div>
-            </div>
-            <div class="specialty-card" data-specialty="hematolog">
-            <div>
-                <strong>Гематолог</strong><br />
-                <small>Доступно: 1</small>
-            </div>
-            </div>
-        </div>  
-        
-        <!-- ВРАЧИ (правая панель) -->
-        <div class="right-panel">
-            <!-- Аллергологи -->
-            <div class="doctors-list" data-doctors="allergolog" style="display: block;">
-            <div class="doctor-card">
+          </div>
+        <% end %>
+      </div>  
+
+      <!-- ВРАЧИ (правая панель) -->
+      <div class="right-panel">
+        <% @specializations.each_with_index do |spec, index| %>
+          <div class="doctors-list" data-doctors="<%= spec.id %>" style="display: <%= index == 0 ? 'block' : 'none' %>;">
+            <% Doctor.where(specialization_id: spec.id).each do |doctor| %>
+              <div class="doctor-card">
                 <div class="doctor-info">
-                <div class="doctor-details">
-                    <strong>Борщ Иван Сергеевич</strong><br />
-                </div>
+                  <div class="doctor-details">
+                    <strong><%= doctor.full_name %></strong><br />
+                    <% if doctor.description.present? %>
+                      <small><%= doctor.description %></small>
+                    <% end %>
+                  </div>
                 </div>
                 <div class="doctor-actions">
-                  <div class="price">1631 ₽</div>
+                  <div class="price"></div>
                 </div>
-                <!-- Расписание (по умолчанию скрыто) -->
-                <div class="schedule-box" style="display: none; margin-top: 15px;">
+                <!-- Расписание -->
+                <div class="schedule-box">
                   <div class="schedule-header" style="display: flex; justify-content: space-between; align-items: center;">
                     <strong>Расписание на неделю</strong>
                   </div>
@@ -318,291 +365,173 @@
                       </tr>
                     </tbody>
                   </table>
-
-
                   <div class="schedule-content">
                     <p><strong>Адрес филиала:</strong><br>Ростовская обл., г. Ростов-на-Дону, пр-кт Ленина, д. 2</p>
                     <p style="font-size: 12px; margin-top: 5px;">Часовой пояс: UTC+</p>
                   </div>
-                </div>
-            </div>
-            </div>
-        
-            <!-- Гастроэнтерологи -->
-            <div class="doctors-list" data-doctors="gastro" style="display: none;">
-            <div class="doctor-card">
-                <div class="doctor-info">
-                <div class="doctor-details">
-                    <strong>Веленчук Екатерина Александровна</strong><br />
-                </div>
-                </div>
-                <div class="doctor-actions">
-                  <div class="price">1631 ₽</div>
-                </div>
-                <!-- Расписание (по умолчанию скрыто) -->
-                <div class="schedule-box" style="display: none; margin-top: 15px;">
-                  <div class="schedule-header" style="display: flex; justify-content: space-between; align-items: center;">
-                    <strong>Расписание на неделю</strong>
-                  </div>
-                  <table class="schedule-table">
-                    <thead>
-                      <tr class="schedule-dates-row">
-                        <!-- Заголовки дней (пн, вт...) вставятся скриптом -->
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr class="schedule-days-row">
-                        <!-- Ячейки с датами появятся тут -->
-                      </tr>
-                    </tbody>
-                  </table>
-
-
-                  <div class="schedule-content">
-                    <p><strong>Адрес филиала:</strong><br>Ростовская обл., г. Ростов-на-Дону, пр-кт Ленина, д. 2</p>
-                    <p style="font-size: 12px; margin-top: 5px;">Часовой пояс: UTC+</p>
+                  <div class="schedule-price">
+                    <div class="price-label">Стоимость приема:</div>
+                    <div class="price-value"><%= doctor.price %> ₽</div>
                   </div>
                 </div>
-            </div>
-            <div class="doctor-card">
-                <div class="doctor-info">
-                <div class="doctor-details">
-                    <strong>Дукова Ольга Артуровна</strong><br />
-                </div>
-                </div>
-                <div class="doctor-actions">
-                  <div class="price">1631 ₽</div>
-                </div>
-                <!-- Расписание (по умолчанию скрыто) -->
-                <div class="schedule-box" style="display: none; margin-top: 15px;">
-                  <div class="schedule-header" style="display: flex; justify-content: space-between; align-items: center;">
-                    <strong>Расписание на неделю</strong>
-                  </div>
-                  <table class="schedule-table">
-                    <thead>
-                      <tr class="schedule-dates-row">
-                        <!-- Заголовки дней (пн, вт...) вставятся скриптом -->
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr class="schedule-days-row">
-                        <!-- Ячейки с датами появятся тут -->
-                      </tr>
-                    </tbody>
-                  </table>
-
-
-                  <div class="schedule-content">
-                    <p><strong>Адрес филиала:</strong><br>Ростовская обл., г. Ростов-на-Дону, пр-кт Ленина, д. 2</p>
-                    <p style="font-size: 12px; margin-top: 5px;">Часовой пояс: UTC+</p>
-                  </div>
-                </div>
-            </div>
-            </div>
-        
-            <!-- Гематологи -->
-            <div class="doctors-list" data-doctors="hematolog" style="display: none;">
-            <div class="doctor-card">
-                <div class="doctor-info">
-                <div class="doctor-details">
-                    <strong>Иванов Сергей Валерьевич</strong><br />
-                </div>
-                </div>
-                <div class="doctor-actions">
-                  <div class="price">1590 ₽</div>
-                </div>
-                <!-- Расписание (по умолчанию скрыто) -->
-                <div class="schedule-box" style="display: none; margin-top: 15px;">
-                  <div class="schedule-header" style="display: flex; justify-content: space-between; align-items: center;">
-                    <strong>Расписание на неделю</strong>
-                  </div>
-                  <table class="schedule-table">
-                    <thead>
-                      <tr class="schedule-dates-row">
-                        <!-- Заголовки дней (пн, вт...) вставятся скриптом -->
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr class="schedule-days-row">
-                        <!-- Ячейки с датами появятся тут -->
-                      </tr>
-                    </tbody>
-                  </table>
-
-
-                  <div class="schedule-content">
-                    <p><strong>Адрес филиала:</strong><br>Ростовская обл., г. Ростов-на-Дону, пр-кт Ленина, д. 2</p>
-                    <p style="font-size: 12px; margin-top: 5px;">Часовой пояс: UTC+</p>
-                  </div>
-                </div>
-            </div>
-            </div>
-        </div>
-  
+              </div>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
     </div>
-</div>
+  </div>
 
   <script>
-   const specialtyCards = document.querySelectorAll('.specialty-card');
+    const specialtyCards = document.querySelectorAll('.specialty-card');
     const doctorLists = document.querySelectorAll('.doctors-list');
     const tabs = document.querySelectorAll('#nav-tabs li');
     const contents = document.querySelectorAll('.tab-content');
-    tabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-            tabs.forEach(t => t.classList.remove('active'));
-            contents.forEach(c => c.classList.remove('active'));
 
-            tab.classList.add('active');
-            const target = document.getElementById(tab.getAttribute('data-tab'));
-            target.classList.add('active');
-        });
+    // Переключение между вкладками
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabs.forEach(t => t.classList.remove('active'));
+        contents.forEach(c => c.classList.remove('active'));
+
+        tab.classList.add('active');
+        const target = document.getElementById(tab.getAttribute('data-tab'));
+        target.classList.add('active');
+      });
     });
+
+    // Фильтрация по специальностям
     specialtyCards.forEach(card => {
       card.addEventListener('click', () => {
-        // 1. Убираем выделение со всех карточек
         specialtyCards.forEach(c => c.classList.remove('selected'));
-        // 2. Добавляем выделение текущей
         card.classList.add('selected');
-  
-        // 3. Получаем выбранную специальность
+
         const selectedSpecialty = card.dataset.specialty;
-  
-        // 4. Показываем только врачей выбранной специальности
+
         doctorLists.forEach(list => {
           list.style.display = list.dataset.doctors === selectedSpecialty ? 'block' : 'none';
         });
       });
     });
+
+    // Обработчик клика на карточку врача
+    document.querySelectorAll('.doctor-card').forEach(card => {
+      card.addEventListener('click', (e) => {
+        // Проверяем, что клик не был по расписанию или его элементам
+        if (!e.target.closest('.schedule-box')) {
+          toggleSchedule(card);
+
+          // Обновляем расписание при первом открытии
+          const scheduleBox = card.querySelector('.schedule-box');
+          if (scheduleBox.classList.contains('active')) {
+            updateScheduleHeaders();
+            const name = card.querySelector('.doctor-details strong').textContent.trim();
+            const priceText = card.querySelector('.price').textContent.trim();
+            const price = priceText.replace(/[^\d]/g, ''); 
+            const table = card.querySelector('.schedule-table');
+            if (table) {
+              renderSchedule(name, price, table);
+            }
+          }
+        }
+      });
+    });
+
+    // Функция переключения расписания
     function toggleSchedule(card) {
       const schedule = card.querySelector('.schedule-box');
       const allSchedules = document.querySelectorAll('.schedule-box');
+
+      // Закрываем все другие расписания
       allSchedules.forEach(s => {
-       if (s !== schedule) s.style.display = 'none';
+        if (s !== schedule) s.classList.remove('active');
       });
-      schedule.style.display = (schedule.style.display === 'none') ? 'block' : 'none';
-    }
-    function login() {
-      const login = document.querySelector('input[type="text"]').value;
-      const password = document.querySelector('input[type="password"]').value;
 
-    // Простая проверка на непустой ввод (можно заменить на настоящую авторизацию)
-      if (login.trim() && password.trim()) {
-        document.querySelector('.login-panel').style.display = 'none';
-        document.querySelector('.user-panel').style.display = 'block';
-        document.getElementById('user-name').textContent = login;
-      } else {
-        alert('Пожалуйста, введите логин и пароль');
+      // Переключаем текущее расписание
+      schedule.classList.toggle('active');
+
+      // Прокручиваем к расписанию, если оно открыто
+      if (schedule.classList.contains('active')) {
+        schedule.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       }
-      localStorage.setItem('loggedin', 'true');
-      showScreen('dashboard-screen');
-  }
-
-    function logout() {
-      document.querySelector('.user-panel').style.display = 'none';
-      document.querySelector('.login-panel').style.display = 'block';
-      localStorage.removeItem('loggedin');
-      showScreen('login-screen');
     }
 
-  let currentWeekOffset = 0;
+    // Обновление заголовков расписания
+    function updateScheduleHeaders() {
+      const headers = document.querySelectorAll('.schedule-dates-row');
 
+      headers.forEach(tr => {
+        tr.innerHTML = ''; // очищаем
+        const start = getStartOfCurrentWeek();
 
-  function updateScheduleHeaders() {
-    const headers = document.querySelectorAll('.schedule-table .schedule-dates-row');
+        for (let i = 0; i < 7; i++) {
+          const day = new Date(start);
+          day.setDate(start.getDate() + i);
+          const dayName = ['пн','вт','ср','чт','пт','сб','вс'][day.getDay()];
+          const formatted = day.toLocaleDateString('ru-RU', { day: 'numeric', month: 'numeric' });
+          const th = document.createElement('th');
+          th.innerHTML = `${dayName}<br>${formatted}`;
+          tr.appendChild(th);
+        }
+      });
+    }
 
-    headers.forEach(tr => {
-      tr.innerHTML = ''; // очищаем
-      const start = new Date();
-      start.setDate(start.getDate() + currentWeekOffset * 7);
+    // Получение даты начала текущей недели (понедельник)
+    function getStartOfCurrentWeek() {
+      const today = new Date();
+      const day = today.getDay();
+      const diff = today.getDate() - day + (day === 0 ? -6 : 1); // adjust when day is sunday
+      return new Date(today.setDate(diff));
+    }
+
+    // Генерация расписания
+    function renderSchedule(doctorName, price, tableElement) {
+      const daysOfWeek = ['пн','вт','ср','чт','пт','сб','вс'];
+      const headerRow = tableElement.querySelector('.schedule-dates-row');
+      const bodyRow = tableElement.querySelector('.schedule-days-row');
+
+      headerRow.innerHTML = '';
+      bodyRow.innerHTML = '';
+
+      const startDate = getStartOfCurrentWeek();
 
       for (let i = 0; i < 7; i++) {
-        const day = new Date(start);
-        day.setDate(start.getDate() + i);
-        const dayName = ['пн','вт','ср','чт','пт','сб','вс'][day.getDay() === 0 ? 6 : day.getDay() - 1];
-        const formatted = day.toLocaleDateString('ru-RU');
+        const date = new Date(startDate);
+        date.setDate(startDate.getDate() + i);
+        const formattedDate = date.toLocaleDateString('ru-RU', { day: 'numeric', month: 'numeric' });
+
+        // Заголовок дня
         const th = document.createElement('th');
-        th.innerHTML = `${dayName}<br>${formatted}`;
-        tr.appendChild(th);
+        th.innerHTML = `${daysOfWeek[i]}<br>${formattedDate}`;
+        headerRow.appendChild(th);
+
+        // Ячейка для записи
+        const td = document.createElement('td');
+        td.textContent = '09:00 - 18:00'; // Пример времени
+        td.className = 'selectable-date';
+        td.onclick = (e) => {
+          e.stopPropagation(); // Чтобы не срабатывал клик на карточку
+          alert(`Вы записаны к ${doctorName} на ${daysOfWeek[i]}, ${formattedDate}\nСтоимость: ${price} руб.`);
+        };
+        bodyRow.appendChild(td);
       }
+    }
+
+    // Инициализация при загрузке страницы
+    window.addEventListener('DOMContentLoaded', () => {
+      updateScheduleHeaders();
+
+      // Инициализация расписания для всех врачей
+      document.querySelectorAll('.doctor-card').forEach(card => {
+        const name = card.querySelector('.doctor-details strong').textContent.trim();
+        const priceText = card.querySelector('.price').textContent.trim();
+        const price = priceText.replace(/[^\d]/g, ''); 
+        const table = card.querySelector('.schedule-table');
+        if (table) {
+          renderSchedule(name, price, table);
+        }
+      });
     });
-
-  function getStartOfCurrentWeek() {
-    const today = new Date();
-
-  // Получаем номер дня недели (0 — воскресенье, 1 — понедельник, ..., 6 — суббота)
-    const day = today.getDay();
-
-  // Смещение до понедельника
-    const diff = (day === 0 ? -6 : 1 - day);
-
-  // Находим понедельник текущей недели
-    const monday = new Date(today);
-    monday.setDate(today.getDate() + diff);
-    monday.setHours(0, 0, 0, 0);
-
-    return monday;
-  }
-
-  function getStartDate() {
-    const start = getStartOfCurrentWeek();
-    start.setDate(start.getDate() + currentWeekOffset * 7);
-    return start;
-  }
-  const startDate = new Date(getStartDate()); // понедельник
-
-  function renderSchedule(doctorName, price, tableElement) {
-    const daysOfWeek = ['пн', 'вт', 'ср', 'чт', 'пт', 'сб', 'вс'];
-    const headerRow = tableElement.querySelector('.schedule-dates-row');
-    const bodyRow = tableElement.querySelector('.schedule-days-row');
-
-    headerRow.innerHTML = '';
-    bodyRow.innerHTML = '';
-
-    for (let i = 0; i < 7; i++) {
-      const date = new Date(startDate);
-      date.setDate(startDate.getDate() + i);
-      const formattedDate = date.toLocaleDateString('ru-RU');
-
-      // Заголовки дней
-      const th = document.createElement('th');
-      th.innerHTML = `${daysOfWeek[i]}<br>${formattedDate}`;
-      headerRow.appendChild(th);
-
-      // Кликабельные ячейки
-      const td = document.createElement('td');
-      td.textContent = 'Выбрать';
-      td.className = 'selectable-date';
-      td.style.cursor = 'pointer';
-      td.style.textAlign = 'center';
-      td.style.backgroundColor = '#e0f7fa';
-      td.onclick = () => {
-        const url = `confirm.html?doctor=${encodeURIComponent(doctorName)}&date=${encodeURIComponent(formattedDate)}&price=${encodeURIComponent(price)}`;
-        window.location.href = url;
-      };
-      bodyRow.appendChild(td);
-    }
-  }
-
-  document.querySelectorAll('.doctor-card').forEach(card => {
-    const name = card.querySelector('.doctor-details strong').textContent.trim();
-    const priceText = card.querySelector('.price').textContent.trim();
-    const price = priceText.replace(/[^\d]/g, ''); 
-    const table = card.querySelector('.schedule-table');
-    if (table) {
-      renderSchedule(name, price, table);
-    }
-  });
-  }
-  window.addEventListener('DOMContentLoaded', updateScheduleHeaders);
-  window.addEventListener('DOMContentLoaded', () => {
-    const loggedIn = localStorage.getItem('loggedin');
-    if (loggedIn === 'true') {
-      showScreen('dashboard-screen');
-    } else {
-      showScreen('login-screen');
-    }
-  });
   </script>
-  
 </body>
 </html>
