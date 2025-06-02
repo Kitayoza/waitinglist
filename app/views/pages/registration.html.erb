@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Регистрация</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      margin: 0;
+      padding: 40px;
+    }
+    .form-container {
+      max-width: 800px;
+      margin: auto;
+      background: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    h2 {
+      margin-bottom: 20px;
+      color: #007fae;
+    }
+    .form-group {
+      display: flex;
+      flex-wrap: wrap;
+      column-gap: 50px;
+      row-gap: 20px;
+    }
+    .form-col {
+      flex: 1;
+      min-width: 300px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    input[type="date"] {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    .form-checkbox {
+      margin-bottom: 10px;
+    }
+    .form-checkbox label {
+      font-weight: normal;
+    }
+    .captcha {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+    .captcha img {
+      height: 40px;
+      border: 1px solid #ccc;
+    }
+    .form-actions {
+      margin-top: 20px;
+      display: flex;
+      justify-content: space-between;
+    }
+    .btn {
+      padding: 10px 20px;
+      background: #0097b2;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    .btn.cancel {
+      background: #ccc;
+      color: black;
+    }
+    .gender-toggle button {
+      padding: 10px;
+      margin-right: 10px;
+      border: 1px solid #007fae;
+      background: white;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+    .gender-toggle button.active {
+      background: #007fae;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <div class="form-container">
+    <h2>1. Данные пользователя</h2>
+    <form>
+      <div class="form-group">
+        <div class="form-col">
+          <label>Фамилия</label>
+          <input type="text" placeholder="Иванов">
+          <label>Имя</label>
+          <input type="text" placeholder="Иван">
+          <label>Отчество</label>
+          <input type="text" placeholder="Иванович">
+          <div class="form-checkbox">
+            <input type="checkbox" id="no-middle">
+            <label for="no-middle">без отчества</label>
+          </div>
+          <div class="form-checkbox">
+            <input type="checkbox" id="agree">
+            <label for="agree">Согласен(на) <a href="#">на обработку персональных данных</a></label>
+          </div>
+          <div class="captcha">
+            <img src="captcha.png" alt="captcha">
+            <input type="text" placeholder="Введите текст">
+          </div>
+        </div>
+        <div class="form-col">
+          <label>Дата рождения</label>
+          <input type="date">
+          <label>Адрес электронной почты</label>
+          <input type="email" placeholder="example@mail.ru">
+          <label>Мобильный телефон</label>
+          <input type="tel" placeholder="+7(000)000-00-00">
+          <label>Пол</label>
+          <div class="gender-toggle">
+            <button type="button" class="active" onclick="selectGender(this)">Мужской</button>
+            <button type="button" onclick="selectGender(this)">Женский</button>
+          </div>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="btn cancel" onclick="window.location.href='main.html'">Отмена</button>
+        <button type="submit" class="btn" onclick="window.location.href='main.html'">Зарегистрироваться</button>
+      </div>
+    </form>
+  </div>
+  <script>
+    function selectGender(button) {
+      const buttons = document.querySelectorAll('.gender-toggle button');
+      buttons.forEach(btn => btn.classList.remove('active'));
+      button.classList.add('active');
+    }
+    function showScreen(idToShow) {
+      const screens = ['login-screen', 'dashboard-screen'];
+      screens.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = (id === idToShow) ? 'block' : 'none';
+      });
+    }
+  </script>
+</body>
+</html>
