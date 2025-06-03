@@ -87,4 +87,14 @@ Rails.application.configure do
   #
   # Skip DNS rebinding protection for the default health check endpoint.
   # config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
+  
+    config.hosts << /[a-z0-9-]+\.onrender\.com/
+  
+  # Если используете кастомный домен, добавьте его тоже:
+  # config.hosts << "ваш-домен.com"
+
+  # Для health check (если используете)
+  config.host_authorization = { 
+    exclude: ->(request) { request.path == "/up" } 
+  }
 end
