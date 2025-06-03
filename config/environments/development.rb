@@ -68,8 +68,9 @@ Rails.application.configure do
 
   # Allow hosting on *.replit.dev hosts
   config.hosts = [
-  "waitinglist-waxr.onrender.com",
-  /[a-z0-9-]+\.onrender\.com/ # Все поддомены Render
+    "localhost",
+    "waitinglist-waxr.onrender.com",
+    /[a-z0-9-]+\.onrender\.com/ # Все поддомены Render
   ]
 
   # Raise error when a before_action's only/except options reference missing actions.
