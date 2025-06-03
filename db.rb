@@ -32,6 +32,22 @@ db.execute <<-SQL
   );
 SQL
 
+# Создаем таблицу записей
+db.execute <<-SQL
+  CREATE TABLE IF NOT EXISTS appointments (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_login TEXT NOT NULL,
+    doctor_id INTEGER NOT NULL,
+    doctor_name TEXT NOT NULL,
+    appointment_date DATE NOT NULL,
+    appointment_time TIME NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (doctor_id) REFERENCES doctors(id)
+  );
+SQL
+
+puts "Таблица записей создана!"
+
 # Заполняем таблицы тестовыми данными
 if db.get_first_value("SELECT COUNT(*) FROM specializations") == 0
   db.execute <<-SQL

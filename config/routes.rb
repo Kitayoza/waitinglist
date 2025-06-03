@@ -25,4 +25,8 @@ Rails.application.routes.draw do
 
   # Дублирующийся маршрут уже объявлен выше, поэтому его можно удалить
   # get 'pages/main'
+
+  resources :appointments, only: [:create]
+
+  post 'appointments', to: 'appointments#create'
 end

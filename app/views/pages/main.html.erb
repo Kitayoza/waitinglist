@@ -187,6 +187,7 @@
     .selectable-date {
       cursor: pointer;
       background-color: #e0f7fa;
+      padding: 10px;
     }
     .selectable-date:hover {
       background-color: #b2ebf2;
@@ -245,6 +246,21 @@
       color: #f7941e;
       font-size: 18px;
       margin-top: 5px;
+    }
+
+    .time-select-btn {
+      background: #0097b2;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 3px;
+      cursor: pointer;
+      font-family: inherit;
+      margin: 2px;
+    }
+
+    .time-select-btn:hover {
+      background: #007a8a;
     }
   </style>
 </head>
@@ -336,7 +352,7 @@
         <% @specializations.each_with_index do |spec, index| %>
           <div class="doctors-list" data-doctors="<%= spec.id %>" style="display: <%= index == 0 ? 'block' : 'none' %>;">
             <% Doctor.where(specialization_id: spec.id).each do |doctor| %>
-              <div class="doctor-card">
+              <div class="doctor-card" data-doctor-id="<%= doctor.id %>">
                 <div class="doctor-info">
                   <div class="doctor-details">
                     <strong><%= doctor.full_name %></strong><br />
@@ -383,152 +399,216 @@
   </div>
 
   <script>
-    const specialtyCards = document.querySelectorAll('.specialty-card');
-    const doctorLists = document.querySelectorAll('.doctors-list');
-    const tabs = document.querySelectorAll('#nav-tabs li');
-    const contents = document.querySelectorAll('.tab-content');
+    document.addEventListener('DOMContentLoaded', function() {
+      // Переключение вкладок
+      const tabs = document.querySelectorAll('#nav-tabs li');
+      const contents = document.querySelectorAll('.tab-content');
 
-    // Переключение между вкладками
-    tabs.forEach(tab => {
-      tab.addEventListener('click', () => {
-        tabs.forEach(t => t.classList.remove('active'));
-        contents.forEach(c => c.classList.remove('active'));
+      tabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+          tabs.forEach(t => t.classList.remove('active'));
+          contents.forEach(c => c.classList.remove('active'));
 
-        tab.classList.add('active');
-        const target = document.getElementById(tab.getAttribute('data-tab'));
-        target.classList.add('active');
-      });
-    });
-
-    // Фильтрация по специальностям
-    specialtyCards.forEach(card => {
-      card.addEventListener('click', () => {
-        specialtyCards.forEach(c => c.classList.remove('selected'));
-        card.classList.add('selected');
-
-        const selectedSpecialty = card.dataset.specialty;
-
-        doctorLists.forEach(list => {
-          list.style.display = list.dataset.doctors === selectedSpecialty ? 'block' : 'none';
+          this.classList.add('active');
+          document.getElementById(this.dataset.tab).classList.add('active');
         });
       });
-    });
 
-    // Обработчик клика на карточку врача
-    document.querySelectorAll('.doctor-card').forEach(card => {
-      card.addEventListener('click', (e) => {
-        // Проверяем, что клик не был по расписанию или его элементам
-        if (!e.target.closest('.schedule-box')) {
-          toggleSchedule(card);
+      // Фильтрация по специальностям
+      const specialtyCards = document.querySelectorAll('.specialty-card');
+      const doctorLists = document.querySelectorAll('.doctors-list');
 
-          // Обновляем расписание при первом открытии
-          const scheduleBox = card.querySelector('.schedule-box');
-          if (scheduleBox.classList.contains('active')) {
-            updateScheduleHeaders();
-            const name = card.querySelector('.doctor-details strong').textContent.trim();
-            const priceText = card.querySelector('.price').textContent.trim();
-            const price = priceText.replace(/[^\d]/g, ''); 
-            const table = card.querySelector('.schedule-table');
-            if (table) {
-              renderSchedule(name, price, table);
+      specialtyCards.forEach(card => {
+        card.addEventListener('click', () => {
+          specialtyCards.forEach(c => c.classList.remove('selected'));
+          card.classList.add('selected');
+
+          const selectedSpecialty = card.dataset.specialty;
+
+          doctorLists.forEach(list => {
+            list.style.display = list.dataset.doctors === selectedSpecialty ? 'block' : 'none';
+          });
+        });
+      });
+
+      // Обработчик клика на карточку врача
+      document.querySelectorAll('.doctor-card').forEach(card => {
+        card.addEventListener('click', (e) => {
+          // Проверяем, что клик не был по расписанию или его элементам
+          if (!e.target.closest('.schedule-box') && !e.target.classList.contains('time-select-btn')) {
+            toggleSchedule(card);
+
+            // Обновляем расписание при первом открытии
+            const scheduleBox = card.querySelector('.schedule-box');
+            if (scheduleBox.classList.contains('active')) {
+              updateScheduleHeaders();
+              const name = card.querySelector('.doctor-details strong').textContent.trim();
+              const doctorId = card.dataset.doctorId;
+              const priceText = card.querySelector('.price').textContent.trim();
+              const price = priceText.replace(/[^\d]/g, '');
+              const table = card.querySelector('.schedule-table');
+              if (table) {
+                renderSchedule(name, doctorId, price, table);
+              }
             }
           }
+        });
+      });
+
+      // Функция переключения расписания
+      function toggleSchedule(card) {
+        const schedule = card.querySelector('.schedule-box');
+        const allSchedules = document.querySelectorAll('.schedule-box');
+
+        // Закрываем все другие расписания
+        allSchedules.forEach(s => {
+          if (s !== schedule) s.classList.remove('active');
+        });
+
+        // Переключаем текущее расписание
+        schedule.classList.toggle('active');
+
+        // Прокручиваем к расписанию, если оно открыто
+        if (schedule.classList.contains('active')) {
+          schedule.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
-      });
-    });
-
-    // Функция переключения расписания
-    function toggleSchedule(card) {
-      const schedule = card.querySelector('.schedule-box');
-      const allSchedules = document.querySelectorAll('.schedule-box');
-
-      // Закрываем все другие расписания
-      allSchedules.forEach(s => {
-        if (s !== schedule) s.classList.remove('active');
-      });
-
-      // Переключаем текущее расписание
-      schedule.classList.toggle('active');
-
-      // Прокручиваем к расписанию, если оно открыто
-      if (schedule.classList.contains('active')) {
-        schedule.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       }
-    }
 
-    // Обновление заголовков расписания
-    function updateScheduleHeaders() {
-      const headers = document.querySelectorAll('.schedule-dates-row');
+      // Обновление заголовков расписания
+      function updateScheduleHeaders() {
+        const headers = document.querySelectorAll('.schedule-dates-row');
 
-      headers.forEach(tr => {
-        tr.innerHTML = ''; // очищаем
-        const start = getStartOfCurrentWeek();
+        headers.forEach(tr => {
+          tr.innerHTML = ''; // очищаем
+          const start = getStartOfCurrentWeek();
+
+          for (let i = 0; i < 7; i++) {
+            const day = new Date(start);
+            day.setDate(start.getDate() + i);
+            const dayName = ['пн','вт','ср','чт','пт','сб','вс'][day.getDay()];
+            const formatted = day.toLocaleDateString('ru-RU', { day: 'numeric', month: 'numeric' });
+            const th = document.createElement('th');
+            th.innerHTML = `${dayName}<br>${formatted}`;
+            tr.appendChild(th);
+          }
+        });
+      }
+
+      // Получение даты начала текущей недели (понедельник)
+      function getStartOfCurrentWeek() {
+        const today = new Date();
+        const day = today.getDay();
+        const diff = today.getDate() - day + (day === 0 ? -6 : 1); // adjust when day is sunday
+        return new Date(today.setDate(diff));
+      }
+
+      async function createAppointment(doctorId, doctorName, date, time) {
+        try {
+          // Валидация данных
+          if (!doctorId || !doctorName || !date || !time) {
+            throw new Error('Не все обязательные поля заполнены');
+          }
+
+          const response = await fetch('/appointments', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
+            },
+            body: JSON.stringify({
+              user_login: '<%= current_user&.login || "guest_#{Time.now.to_i}" %>',
+              doctor_id: doctorId,
+              doctor_name: doctorName,
+              date: date,
+              time: time
+            })
+          });
+
+          const result = await response.json();
+
+          if (!response.ok) {
+            throw new Error(result.message || `Ошибка сервера: ${result.error || 'неизвестная ошибка'}`);
+          }
+
+          alert('Запись успешно создана!');
+          return result;
+        } catch (error) {
+          console.error('Ошибка при создании записи:', error);
+          alert('Ошибка при создании записи: ' + error.message);
+          throw error;
+        }
+      }
+
+      // Обновлённый обработчик кнопки выбора времени
+      function setupTimeButton(timeButton, doctorId, doctorName, isoDate) {
+        timeButton.onclick = async (e) => {
+          e.stopPropagation();
+          const time = prompt("Введите время приема (например, 14:30):");
+
+          if (!time || !time.match(/^\d{1,2}:\d{2}$/)) {
+            alert('Пожалуйста, введите время в формате ЧЧ:MM');
+            return;
+          }
+
+          try {
+            await createAppointment(doctorId, doctorName, isoDate, time);
+          } catch (error) {
+            // Ошибка уже обработана в createAppointment
+          }
+        };
+      }
+
+      // Генерация расписания
+      function renderSchedule(doctorName, doctorId, price, tableElement) {
+        const daysOfWeek = ['пн','вт','ср','чт','пт','сб','вс'];
+        const headerRow = tableElement.querySelector('.schedule-dates-row');
+        const bodyRow = tableElement.querySelector('.schedule-days-row');
+
+        headerRow.innerHTML = '';
+        bodyRow.innerHTML = '';
+
+        const startDate = getStartOfCurrentWeek();
 
         for (let i = 0; i < 7; i++) {
-          const day = new Date(start);
-          day.setDate(start.getDate() + i);
-          const dayName = ['пн','вт','ср','чт','пт','сб','вс'][day.getDay()];
-          const formatted = day.toLocaleDateString('ru-RU', { day: 'numeric', month: 'numeric' });
+          const date = new Date(startDate);
+          date.setDate(startDate.getDate() + i);
+          const formattedDate = date.toLocaleDateString('ru-RU', { day: 'numeric', month: 'numeric' });
+          const isoDate = date.toISOString().split('T')[0]; // Формат YYYY-MM-DD
+
+          // Заголовок дня
           const th = document.createElement('th');
-          th.innerHTML = `${dayName}<br>${formatted}`;
-          tr.appendChild(th);
+          th.innerHTML = `${daysOfWeek[i]}<br>${formattedDate}`;
+          headerRow.appendChild(th);
+
+          // Ячейка для записи
+          const td = document.createElement('td');
+
+          // Создаем кнопку для выбора времени
+          const timeButton = document.createElement('button');
+          timeButton.textContent = 'Выбрать время';
+          timeButton.className = 'time-select-btn';
+
+          // Устанавливаем обработчик с новой функцией
+          setupTimeButton(timeButton, doctorId, doctorName, isoDate);
+
+          td.appendChild(timeButton);
+          td.className = 'selectable-date';
+          bodyRow.appendChild(td);
         }
-      });
-    }
-
-    // Получение даты начала текущей недели (понедельник)
-    function getStartOfCurrentWeek() {
-      const today = new Date();
-      const day = today.getDay();
-      const diff = today.getDate() - day + (day === 0 ? -6 : 1); // adjust when day is sunday
-      return new Date(today.setDate(diff));
-    }
-
-    // Генерация расписания
-    function renderSchedule(doctorName, price, tableElement) {
-      const daysOfWeek = ['пн','вт','ср','чт','пт','сб','вс'];
-      const headerRow = tableElement.querySelector('.schedule-dates-row');
-      const bodyRow = tableElement.querySelector('.schedule-days-row');
-
-      headerRow.innerHTML = '';
-      bodyRow.innerHTML = '';
-
-      const startDate = getStartOfCurrentWeek();
-
-      for (let i = 0; i < 7; i++) {
-        const date = new Date(startDate);
-        date.setDate(startDate.getDate() + i);
-        const formattedDate = date.toLocaleDateString('ru-RU', { day: 'numeric', month: 'numeric' });
-
-        // Заголовок дня
-        const th = document.createElement('th');
-        th.innerHTML = `${daysOfWeek[i]}<br>${formattedDate}`;
-        headerRow.appendChild(th);
-
-        // Ячейка для записи
-        const td = document.createElement('td');
-        td.textContent = '09:00 - 18:00'; // Пример времени
-        td.className = 'selectable-date';
-        td.onclick = (e) => {
-          e.stopPropagation(); // Чтобы не срабатывал клик на карточку
-          alert(`Вы записаны к ${doctorName} на ${daysOfWeek[i]}, ${formattedDate}\nСтоимость: ${price} руб.`);
-        };
-        bodyRow.appendChild(td);
       }
-    }
 
-    // Инициализация при загрузке страницы
-    window.addEventListener('DOMContentLoaded', () => {
+      // Инициализация при загрузке страницы
       updateScheduleHeaders();
 
       // Инициализация расписания для всех врачей
       document.querySelectorAll('.doctor-card').forEach(card => {
         const name = card.querySelector('.doctor-details strong').textContent.trim();
+        const doctorId = card.dataset.doctorId;
         const priceText = card.querySelector('.price').textContent.trim();
-        const price = priceText.replace(/[^\d]/g, ''); 
+        const price = priceText.replace(/[^\d]/g, '');
         const table = card.querySelector('.schedule-table');
         if (table) {
-          renderSchedule(name, price, table);
+          renderSchedule(name, doctorId, price, table);
         }
       });
     });
