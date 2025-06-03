@@ -1,14 +1,35 @@
 #!/bin/bash -e
 
-# Enable jemalloc for reduced memory usage and latency.
+# Enable jemalloc for better memory management
 if [ -z "${LD_PRELOAD+x}" ]; then
     LD_PRELOAD=$(find /usr/lib -name libjemalloc.so.2 -print -quit)
     export LD_PRELOAD
 fi
 
-# If running the rails server then create or migrate existing database
-if [ "${@: -2:1}" == "./bin/rails" ] && [ "${@: -1:1}" == "server" ]; then
-  ./bin/rails db:prepare
+# Database preparation logic
+prepare_database() {
+    echo "--> Starting database preparation..."
+    
+    # Check if database exists
+    if bundle exec rails db:version >/dev/null 2>&1; then
+        echo "--> Database exists, running migrations..."
+        bundle exec rails db:migrate
+    else
+        echo "--> Database doesn't exist, creating and loading schema..."
+        bundle exec rails db:setup
+    fi
+    
+    echo "--> Database is ready!"
+}
+
+# Run preparation when:
+# 1. Running rails server
+# 2. Or when explicitly requested via PREPARE_DB env var
+if [[ "$*" == *"rails server"* ]] || [[ "${PREPARE_DB}" == "true" ]]; then
+    prepare_database || {
+        echo "!!! Database preparation failed!"
+        exit 1
+    }
 fi
 
-exec "${@}"
+exec "$@"

@@ -67,7 +67,11 @@ Rails.application.configure do
 
 
   # Allow hosting on *.replit.dev hosts
-  config.hosts << /.*\.replit\.dev/  
+  config.hosts = [
+    "localhost",
+    "waitinglist-waxr.onrender.com",
+    /[a-z0-9-]+\.onrender\.com/ # Все поддомены Render
+  ]
 
   # Raise error when a before_action's only/except options reference missing actions.
   config.action_controller.raise_on_missing_callback_actions = true
@@ -76,9 +80,7 @@ Rails.application.configure do
   # config.generators.apply_rubocop_autocorrect_after_generate!
 
   # Allow hosting on *.replit.dev hosts
-  config.hosts << /.*\.replit\.dev/
 
-  
 end
 
 
