@@ -87,14 +87,4 @@ Rails.application.configure do
   #
   # Skip DNS rebinding protection for the default health check endpoint.
   # config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
-
-  config.hosts = [
-  "waitinglist-waxr.onrender.com",
-  /[a-z0-9-]+\.onrender\.com/ # Все поддомены Render
-  ]
-
-  # Для health checks (если используете)
-  config.host_authorization = { 
-    exclude: ->(request) { request.path == "/up" } 
-  }
 end
